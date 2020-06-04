@@ -28,26 +28,10 @@
              http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
              http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
 
-    <!--
-      The namespace for the camelContext element in Blueprint is 'http://camel.apache.org/schema/blueprint'.
-
-      While it is not required to assign id's to the <camelContext/> and <route/> elements, it is a good idea
-      to set those for runtime management purposes (logging, JMX MBeans, ...)
-    -->
     <camelContext id="log-example-context" xmlns="http://camel.apache.org/schema/blueprint" >
 
-        <!--
-          A very simple Camel route, that uses a timer to trigger a message every second.
-
-          The <setBody> sets a body into the Camel Message.
-
-          The <log/> elements are used to add human-friendly business logging statements. They make it easier to see what the
-          route is doing.
-        -->
         <route >
-
             <from uri="timer:foo?period=5000&amp;repeatCount=10" />
-
             <setBody>
                 <constant>Test</constant>
             </setBody>
@@ -66,5 +50,4 @@
     </bean>
     <bean id="noformat" class="org.apache.camel.component.jms.PassThroughJmsKeyFormatStrategy"/>
     <bean id="proc" class="org.example.ForProcess"/>
-    <bean id="pro" class="org.example.OldPro"/>
 </blueprint>
