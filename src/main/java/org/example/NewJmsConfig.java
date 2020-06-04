@@ -13,7 +13,7 @@ import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
-class NewJmsConfig extends JmsConfiguration {
+public class NewJmsConfig extends JmsConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(NewJmsConfig.class);
     private long deliveryDelay;
     public void setDeliveryDelay(long deliveryDelay) {

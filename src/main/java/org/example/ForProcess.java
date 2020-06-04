@@ -12,7 +12,7 @@ public class ForProcess implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         NewJmsConfig newJmsConfig = new NewJmsConfig();
-        newJmsConfig.setDeliveryDelay(150000);
+        newJmsConfig.setDeliveryDelay(15000);
         newJmsConfig.setConnectionFactory(producerTemplate.getConnectionFactory());
         producerTemplate.setConfiguration(newJmsConfig);
         Producer jmsProducer = producerTemplate.createProducer();
