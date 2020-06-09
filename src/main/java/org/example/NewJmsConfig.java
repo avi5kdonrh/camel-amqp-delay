@@ -96,13 +96,10 @@ public class NewJmsConfig extends JmsConfiguration {
             try {
                 String delayObject = message.getStringProperty("deliveryDelay");
                 long delay = 0;
-                if ( delayObject != null && delayObject.length() > 0 ) {
-                    delay = Long.parseLong(delayObject);
+                if ( delayObject != null && delayObject.length() > 0 && ( delay = Long.parseLong(delayObject)) > 0) {
+                        producer.setDeliveryDelay(delay);
                 }
-                if ( delay > 0) {
-                    producer.setDeliveryDelay(delay);
-                }
-            }catch (Exception e){
+            } catch (Exception e){
                 LOG.error("Exception occurred while setting the delivery delay",e);
             }
             if (config.isPreserveMessageQos()) {
