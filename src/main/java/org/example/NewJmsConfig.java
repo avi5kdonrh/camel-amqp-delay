@@ -1,4 +1,5 @@
 package org.example;
+
 import org.apache.camel.component.jms.DestinationEndpoint;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsConstants;
@@ -15,9 +16,9 @@ import javax.jms.Session;
 
 public class NewJmsConfig extends JmsConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(NewJmsConfig.class);
-    private long deliveryDelay;
-    public void setDeliveryDelay(long deliveryDelay) {
-        this.deliveryDelay = deliveryDelay;
+
+    public NewJmsConfig(ConnectionFactory connectionFactory) {
+        super(connectionFactory);
     }
 
     /**
@@ -31,7 +32,6 @@ public class NewJmsConfig extends JmsConfiguration {
 
         ConnectionFactory factory = getTemplateConnectionFactory();
         NewTemplate template = new NewTemplate(this, factory);
-        template.setDeliveryDelay(deliveryDelay);
         template.setPubSubDomain(pubSubDomain);
         if (getDestinationResolver() != null) {
             template.setDestinationResolver(getDestinationResolver());
@@ -82,12 +82,8 @@ public class NewJmsConfig extends JmsConfiguration {
         return template;
     }
 
-    static class NewTemplate extends JmsConfiguration.CamelJmsTemplate{
-        private long deliveryDelay;
+    static class NewTemplate extends CamelJmsTemplate{
         private JmsConfiguration config;
-        public void setDeliveryDelay(long deliveryDelay) {
-            this.deliveryDelay = deliveryDelay;
-        }
 
         public NewTemplate(JmsConfiguration config, ConnectionFactory connectionFactory) {
             super(config, connectionFactory);
@@ -96,7 +92,19 @@ public class NewJmsConfig extends JmsConfiguration {
 
         @Override
         protected void doSend(MessageProducer producer, Message message) throws JMSException {
-            producer.setDeliveryDelay(deliveryDelay);
+            // Set the delivery delay (in milliseconds) in any JMS header and use it here. For example, the deliveryDelay header is used here
+            try {
+                String delayObject = message.getStringProperty("deliveryDelay");
+                long delay = 0;
+                if ( delayObject != null && delayObject.length() > 0 ) {
+                    delay = Long.parseLong(delayObject);
+                }
+                if ( delay > 0) {
+                    producer.setDeliveryDelay(delay);
+                }
+            }catch (Exception e){
+                LOG.error("Exception occurred while setting the delivery delay",e);
+            }
             if (config.isPreserveMessageQos()) {
                 long ttl = message.getJMSExpiration();
                 if (ttl != 0) {

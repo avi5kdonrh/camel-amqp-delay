@@ -35,19 +35,25 @@
             <setBody>
                 <constant>Test</constant>
             </setBody>
-            <process ref="proc"/>
+            <!-- We are setting a String property deliveryDelay in milliseconds -->
+            <setHeader headerName="deliveryDelay">
+                <constant>20000</constant>
+            </setHeader>
             <to uri="log:newLog?showAll=true"/>
-            <!--<to uri="amqp:queue:ABC?jmsKeyFormatStrategy=#noformat"/>-->
+           <to uri="amqp:queue:ABC?jmsKeyFormatStrategy=#noformat"/>
         </route>
     </camelContext>
     <bean id="cf" class="org.apache.qpid.jms.JmsConnectionFactory">
         <argument index="0" value="admin"/>
         <argument index="1" value="admin"/>
-        <argument index="2" value="amqp://localhost:5672?jms.validatePropertyNames=false"/>
+        <argument index="2" value="amqp://169.254.1.199:61616?jms.validatePropertyNames=false"/>
     </bean>
-    <bean id="amqp" class="org.apache.camel.component.amqp.AMQPComponent">
-        <argument index="0" ref="cf"/>
+    <bean id="amqp" class="org.apache.camel.component.jms.JmsComponent">
+       <argument index="0">
+           <bean class="org.example.NewJmsConfig">
+               <argument index="0" ref="cf"/>
+           </bean>
+       </argument>
     </bean>
     <bean id="noformat" class="org.apache.camel.component.jms.PassThroughJmsKeyFormatStrategy"/>
-    <bean id="proc" class="org.example.ForProcess"/>
 </blueprint>
